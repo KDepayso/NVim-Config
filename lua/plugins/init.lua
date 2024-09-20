@@ -12,9 +12,21 @@ return {
       require "configs.lspconfig"
     end,
   },
-  
+
   {
     "mfussenegger/nvim-jdtls",
+  },
+
+  {
+    'mfussenegger/nvim-dap',
+  },
+
+  {
+    "rcarriga/nvim-dap-ui",
+    requires = {"mfussenegger/nvim-dap"},
+    config = function()
+      require('dapui').setup()
+    end
   },
 
   {

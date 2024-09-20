@@ -1,9 +1,18 @@
 -- If you started neovim within `~/dev/xy/project-1` this would resolve to `project-1`
+local HOME = os.getenv('HOME')
+local JAVA_WORKSPACE = os.getenv('JAVA_WORKSPACE')
 local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
-local workspace_dir = '/path/to/workspace-root/' .. project_name
+local workspace_dir = JAVA_WORKSPACE .. project_name
 --                                               ^^
 --                                               string concattenation in Lua
 --                                             
+local bundles = {
+  vim.fn.glob(HOME .. '/AppData/Local/nvim-data/mason/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-*.jar', 1),
+};
+
+vim.list_extend(bundles, vim.split(vim.fn.glob(HOME .. '/AppData/Local/nvim-data/mason/packages/java-test/extension/server/*.jar', 1), "\n"))
+
+
 local status, jdtls = pcall(require, 'jdtls')
 if not status then
   return
@@ -92,12 +101,13 @@ local config = {
   --
   -- If you don't plan on using the debugger or other eclipse.jdt.ls plugins you can remove this
   init_options = {
-    bundles = {}
+      bundles = bundles;
   },
 }
 -- This starts a new client & server,
 -- or attaches to an existing client & server depending on the `root_dir`.
 require('jdtls').start_or_attach(config)
+
 
 vim.keymap.set('n', '<leader>co', "<Cmd>lua require'jdtls'.organize_imports()<CR>", { desc = 'Organize Imports' })
 vim.keymap.set('n', '<leader>crv', "<Cmd>lua require('jdtls').extract_variable()<CR>", { desc = 'Extract Variable' })
@@ -105,3 +115,9 @@ vim.keymap.set('v', '<leader>crv', "<Esc><Cmd>lua require('jdtls').extract_varia
 vim.keymap.set('n', '<leader>crc', "<Cmd>lua require('jdtls').extract_constant()<CR>", { desc = 'Extract Constant' })
 vim.keymap.set('v', '<leader>crc', "<Esc><Cmd>lua require('jdtls').extract_constant(true)<CR>", { desc = 'Extract Constant' })
 vim.keymap.set('v', '<leader>crm', "<Esc><Cmd>lua require('jdtls').extract_method(true)<CR>", { desc = 'Extract Method' })
+
+-- Java Test Class
+vim.keymap.set('n', '<leader>df', "<Cmd>lua require'jdtls'.test_class()<CR>", { desc = 'Test Class' })
+
+-- Java Test Nearest Method
+vim.keymap.set('n', '<leader>dn', "<Cmd>lua require'jdtls'.test_nearest_method()<CR>", { desc = 'Test Nearest Method' })

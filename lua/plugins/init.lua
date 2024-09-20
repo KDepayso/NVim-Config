@@ -21,6 +21,12 @@ return {
     'mfussenegger/nvim-dap',
   },
 
+
+  {
+    'nvim-telescope/telescope.nvim', tag = '0.1.8',
+    dependencies = { 'nvim-lua/plenary.nvim' }
+  },
+
   {
     "rcarriga/nvim-dap-ui",
     requires = {"mfussenegger/nvim-dap"},
